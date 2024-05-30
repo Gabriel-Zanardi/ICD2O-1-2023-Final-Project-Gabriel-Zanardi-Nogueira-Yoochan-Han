@@ -18,21 +18,18 @@ class GameScene extends Phaser.Scene {
     createCar (tier) {
         //car's spawn position 
       if (tier==1) {
-        let carXPosition = //pass = TIER 1
+        const carXPosition = //pass = TIER 1
         pass
       } else if(tier==2) {
-        let carXPosition = //pass = TIER 1 + P
+        const carXPosition = //pass = TIER 1 + P
         pass
       } else {
-        let carXPosition = //pass = TIER 1 + P + R
+        const carXPosition = //pass = TIER 1 + P + R
         pass
       }
-      const carXLocation = Math.floor(carXPosition * 1920) + 1 // this will get a number betwen 1 and 1920 
-      let carXVelocity = Math.floor(Math.random() * 50) + 1 // this will get a number betwee 1 and 50
-      carXVelocity *= Math.round(Math.random()) ? 1 : -1 // this will add minus sign in 50% of cases
-      const anAlien = this.physics.add.sprite(alienXLocation, -100, 'alien')
-      anAlien.body.velocity.y = 200
-      anAlien.body.velocity.x = alienXVelocity
+      const aCar = this.physics.add.sprite(carXLocation, -100, 'alien')
+      aCar.body.velocity.y = 200
+      aCar.body.velocity.x = alienXVelocity
       this.carGroup.add(aCar)
     }
   
@@ -40,8 +37,18 @@ class GameScene extends Phaser.Scene {
       super({ key: "gameScene"})
   
       this.background = null
-      this.car = null
-      this.fireMissile = false
+      this.carLv1 = null
+      this.carLv2 = null
+      this.carLv3 = null
+      this.carLv4 = null
+      this.carLv5 = null
+      this.carLv6 = null
+      this.carLv7 = null
+      this.carLv8 = null
+      this.carLv9 = null
+      this.carLv10 = null
+      this.tier = 0
+      this.tierText = null
       this.money = 0
       this.moneyText = null
       this.level = 0
@@ -67,11 +74,20 @@ class GameScene extends Phaser.Scene {
     console.log("Game Scene")
     //image
     this.load.image("starBackground", "./assets/starBackground.png")
-    this.load.image("ship", "./assets/spaceShip.png")
+    this.load.image("carLv1", "./assets/Biat-lv1.png")
+    this.load.image("carLv2", "./assets/Fride-lv2.png")
+    this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
+    this.load.image("carLv4", ".assets/Biat-lv1.png")
+    this.load.image("carLv5", ".assets/Biat-lv1.png")
+    this.load.image("carLv6", ".assets/Biat-lv1.png")
+    this.load.image("carLv7", ".assets/Biat-lv1.png")
+    this.load.image("carLv8", "./assets/Igniz-lv8.png")
+    this.load.image("carLv9", ".assets/Biat-lv1.png")
+    this.load.image("carLv10", ".assets/Biat-lv1.png")
     this.load.image("missile", "./assets/missile.png")
     this.load.image("alien", "./assets/alien.png")
     //sound
-    this.load.audio('laser', './assets/laser1.wav')
+    this.load.audio('Bonk', './assets/Bonk.wav')
     this.load.audio('explosion', './assets/barrelExploding.wav')
     this.load.audio('bomb', './assets/bomb.wav')
   }   
@@ -85,26 +101,19 @@ class GameScene extends Phaser.Scene {
       this.background = this.add.image(0, 0, "starBackground").setScale(2.0)
       this.background.setOrigin(0, 0)
   
-      this.scoreText = this.add.text(10, 10, "Score: " + this.score.toString(), this.scoreTextStyle)
-  
-      this.ship = this.physics.add.sprite(1920 / 2, 1080 - 100, "ship")
+      this.moneyText = this.add.text(10, 10, "Money: " + this.money.toString(), this.infoTextStyle)
+      
+      //create a group for the missiles 
+      this.carGroup = this.physics.add.group()
   
       //create a group for the missiles
       this.missileGroup = this.physics.add.group()
   
-      //create a group for the aliens
-      this.alienGroup = this.add.group()
-      this.createAlien()
   
-      //collisions between ship and alien
-      this.physics.add.collider(this.missileGroup, this.alienGroup, function(missileCollide, alienCollide) {
-        alienCollide.destroy()
-        missileCollide.destroy()
-        this.sound.play('explosion')
-        this.score = this.score + 1
-        this.scoreText.setText('Score: ' + this.score.toString())
-        this.createAlien()
-        this.createAlien()
+      //collisions between belt and car
+      this.physics.add.collider(this.belt, this.carGroup, function(beltCollide, carCollide) {
+        this.sound.play('Bonk')   // BONK
+
       }.bind(this))    
   
       this.physics.add.collider(this.ship, this.alienGroup, function (shipCollide, alienCollide) {
