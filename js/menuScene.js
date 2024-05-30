@@ -37,7 +37,7 @@ class MenuScene extends Phaser.Scene {
      */
     preload() {
       console.log("Menu Scene")
-      this.load.image("menuSceneBackground", "./assets/placeholder.jpg")
+      this.load.image("menuSceneBackground", "./assets/factory-menu-start.jpg")
       this.load.image("startButton", "./assets/start.png")
     }
   
@@ -47,11 +47,11 @@ class MenuScene extends Phaser.Scene {
      * @param {object} data - Any data passed via ScenePlugin.add() or ScenePlugin.start() 
      */
     create(data) {
-      this.menuSceneBackgroundImage = this.add.sprite(0, 0, "factory-menu-start")
+      this.menuSceneBackgroundImage = this.add.sprite(0, 0, "menuSceneBackground").setScale(2.0)
       this.menuSceneBackgroundImage.x = 1920 / 2
       this.menuSceneBackgroundImage.y = 1080 / 2
   
-      this.startButton = this.add.sprite(1920 / 2, 1080 / 2 + 100, "startButton")
+      this.startButton = this.add.sprite(1920 / 2, 1080 / 2 + 300, "startButton")
       this.startButton.setInteractive({ useHandCursor: true })
       this.startButton.on("pointerdown", () => this.clickButton())
     }
