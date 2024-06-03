@@ -27,10 +27,19 @@ class GameScene extends Phaser.Scene {
         const carXPosition = //pass = TIER 1 + P + R
         pass
       }
-      const aCar = this.physics.add.sprite(carXLocation, -100, 'alien')
-      aCar.body.velocity.y = 200
-      aCar.body.velocity.x = alienXVelocity
-      this.carGroup.add(aCar)
+      for(let counter=1;counter>=10;counter++) {
+        if(counter == this.carLevel) {
+          const newCar = this.physics.add.sprite(carXLocation, -100, ('carLv' + counter))
+          break
+        }
+      }
+      this.carGroup.add(newCar)
+
+      this.carGroup.children.each(function (item) {
+        item.y = item.y - 15
+        if (item.y < pass) { //meet the same y of belt
+        }
+      })
     }
   
     constructor() {
@@ -51,7 +60,7 @@ class GameScene extends Phaser.Scene {
       this.tierText = null
       this.money = 0
       this.moneyText = null
-      this.level = 0
+      this.carLevel = 0
       this.levelText = null
       this.infoTextStyle = {font: '65px Arial', fill:'#ffffff', align: 'center'}
     }
@@ -73,19 +82,17 @@ class GameScene extends Phaser.Scene {
   preload() {
     console.log("Game Scene")
     //image
-    this.load.image("starBackground", "./assets/starBackground.png")
+    this.load.image("starBackground", "./assets/factoryBackground.png")
     this.load.image("carLv1", "./assets/Biat-lv1.png")
     this.load.image("carLv2", "./assets/Fride-lv2.png")
     this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
-    this.load.image("carLv4", ".assets/Biat-lv1.png")
-    this.load.image("carLv5", ".assets/Biat-lv1.png")
-    this.load.image("carLv6", ".assets/Biat-lv1.png")
-    this.load.image("carLv7", ".assets/Biat-lv1.png")
+    this.load.image("carLv4", ".assets/Biat-lv1.png")  //not yet
+    this.load.image("carLv5", ".assets/Biat-lv1.png")  //not yet
+    this.load.image("carLv6", ".assets/Biat-lv1.png")  //not yet
+    this.load.image("carLv7", ".assets/Biat-lv1.png")  //not yet
     this.load.image("carLv8", "./assets/Igniz-lv8.png")
-    this.load.image("carLv9", ".assets/Biat-lv1.png")
-    this.load.image("carLv10", ".assets/Biat-lv1.png")
-    this.load.image("missile", "./assets/missile.png")
-    this.load.image("alien", "./assets/alien.png")
+    this.load.image("carLv9", ".assets/Biat-lv1.png")  //not yet
+    this.load.image("carLv10", ".assets/Biat-lv1.png") //not yet
     //sound
     this.load.audio('Bonk', './assets/Bonk.wav')
     this.load.audio('explosion', './assets/barrelExploding.wav')
@@ -113,7 +120,6 @@ class GameScene extends Phaser.Scene {
       //collisions between belt and car
       this.physics.add.collider(this.belt, this.carGroup, function(beltCollide, carCollide) {
         this.sound.play('Bonk')   // BONK
-
       }.bind(this))    
   
       this.physics.add.collider(this.ship, this.alienGroup, function (shipCollide, alienCollide) {
