@@ -28,7 +28,7 @@ class GameScene extends Phaser.Scene {
         pass
       }
       for(let counter=1;counter>=10;counter++) {
-        if(counter == this.carLevel) {
+        if(counter == this.carLevel) {  //car level
           const newCar = this.physics.add.sprite(carXLocation, -100, ('carLv' + counter))
           break
         }
@@ -56,6 +56,7 @@ class GameScene extends Phaser.Scene {
       this.carLv8 = null
       this.carLv9 = null
       this.carLv10 = null
+      this.conveyorBelt = null
       this.tier = 0
       this.tierText = null
       this.money = 0
@@ -82,21 +83,21 @@ class GameScene extends Phaser.Scene {
   preload() {
     console.log("Game Scene")
     //image
-    this.load.image("starBackground", "./assets/factoryBackground.png")
+    this.load.image("factoryBackground", "./assets/factoryBackground.png")
+    this.load.image("machine1", "./assets/machine1.png")
+    this.load.image("Im-hungry", "./assets/conveyorbelt-test.png")
     this.load.image("carLv1", "./assets/Biat-lv1.png")
     this.load.image("carLv2", "./assets/Fride-lv2.png")
     this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
-    this.load.image("carLv4", ".assets/Biat-lv1.png")  //not yet
-    this.load.image("carLv5", ".assets/Biat-lv1.png")  //not yet
-    this.load.image("carLv6", ".assets/Biat-lv1.png")  //not yet
-    this.load.image("carLv7", ".assets/Biat-lv1.png")  //not yet
+    // this.load.image("carLv4", ".assets/Biat-lv1.png")  //not yet
+    // this.load.image("carLv5", ".assets/Biat-lv1.png")  //not yet
+    // this.load.image("carLv6", ".assets/Biat-lv1.png")  //not yet
+    // this.load.image("carLv7", ".assets/Biat-lv1.png")  //not yet
     this.load.image("carLv8", "./assets/Igniz-lv8.png")
-    this.load.image("carLv9", ".assets/Biat-lv1.png")  //not yet
-    this.load.image("carLv10", ".assets/Biat-lv1.png") //not yet
+    // this.load.image("carLv9", ".assets/Biat-lv1.png")  //not yet
+    // this.load.image("carLv10", ".assets/Biat-lv1.png") //not yet
     //sound
     this.load.audio('Bonk', './assets/Bonk.wav')
-    this.load.audio('explosion', './assets/barrelExploding.wav')
-    this.load.audio('bomb', './assets/bomb.wav')
   }   
    
     /**
@@ -105,76 +106,82 @@ class GameScene extends Phaser.Scene {
      * @param {object} data - Any data passed via ScenePlugin.add() or scenePlugin.start().
      */
     create(data) { 
-      this.background = this.add.image(0, 0, "starBackground").setScale(2.0)
+      this.background = this.add.image(0, 0, "factoryBackground").setScale(2.0)
       this.background.setOrigin(0, 0)
   
-      this.moneyText = this.add.text(10, 10, "Money: " + this.money.toString(), this.infoTextStyle)
+      this.moneyText = this.add.text(10, 10, "Money: " + this.money.toString(), this.infoTextStyle).setScale(0.8)
+      this.tierText = this.add.text(10, 60, "Factory Tier: " + this.tier.toString(), this.infoTextStyle).setScale(0.8)
+      this.levelText = this.add.text(10, 110, "Level: " + this.carLevel.toString(), this.infoTextStyle).setScale(0.8)
       
       //create a group for the missiles 
       this.carGroup = this.physics.add.group()
   
-      //create a group for the missiles
-      this.missileGroup = this.physics.add.group()
+      //create a  producer
+      this.machine = this.add.image(1900 / 2, 1080 / 2, "machine1").setScale(1.1)
+
+      this.belt = this.add.image(1900 / 2, 1080 / 2, "Im-hungry").setScale(1.1)
   
   
       //collisions between belt and car
       this.physics.add.collider(this.belt, this.carGroup, function(beltCollide, carCollide) {
-        this.sound.play('Bonk')   // BONK
+        this.sound.play('Bonk')   
       }.bind(this))    
-  
+      
+      //null
       this.physics.add.collider(this.ship, this.alienGroup, function (shipCollide, alienCollide) {
         this.sound.play('bomb')
         this.physics.pause()
         alienCollide.destroy()
         shipCollide.destroy()
         this.gameOverText = this.add.text(1920 / 2, 1080 / 2, "Game Over! \nclick to play again.", this.gameOverTextStyle).setOrigin(0.5)
-        this.gameOverText.setInteractive({ useHandCursor: true})
+        this.gameOverText.setInteractive({ useHandCursor: true})     //interaction
         this.gameOverText.on('pointerdown', ()=> this.scene.start('gameScene'))
       }.bind(this))
-    }
-  
+    } 
+
     /**
    * Should be overridden by your own Scenes.
    * This method is called once per game step while the scene is running 
    * @param {number} time - The current time.
    * @param {number} delta - The delta time in ms since the last frame.
    */  
+
     update(time, delta) {
       const keyLeftObj = this.input.keyboard.addKey("LEFT")
       const keyRightObj = this.input.keyboard.addKey("RIGHT")
       const keySpaceObj = this.input.keyboard.addKey("SPACE")
   
-      if (keyLeftObj.isDown === true) {
-        this.ship.x -= 15
-        if (this.ship.x <0) {
-          this.ship.x = 0
-        }
-      }
-      if (keyRightObj.isDown === true) {
-        this.ship.x += 15
-        if (this.ship.x > 1920) {
-          this.ship.x = 1920
-        }
-      }
-      if (keySpaceObj.isDown === true) {
-        if (this.fireMissile === false) {
-            //fire missile
-            this.fireMissile = true
-            const aNewMissile = this.physics.add.sprite(this.ship.x, this.ship.y, 'missile')
-            this.missileGroup.add(aNewMissile)
-            this.sound.play('laser')
-          }
-        }
+      // if (keyLeftObj.isDown === true) {
+      //   this.ship.x -= 15
+      //   if (this.ship.x <0) {
+      //     this.ship.x = 0
+      //   }
+      // }
+      // if (keyRightObj.isDown === true) {
+      //   this.ship.x += 15
+      //   if (this.ship.x > 1920) {
+      //     this.ship.x = 1920
+      //   }
+      // }
+      // if (keySpaceObj.isDown === true) {
+      //   if (this.fireMissile === false) {
+      //       //fire missile
+      //       this.fireMissile = true
+      //       const aNewMissile = this.physics.add.sprite(this.ship.x, this.ship.y, 'missile')
+      //       this.missileGroup.add(aNewMissile)
+      //       this.sound.play('laser')
+      //     }
+      //   }
   
-        if (keySpaceObj.isUp === true) {
-          this.fireMissile = false
-        }
-        this.missileGroup.children.each(function (item) {
-          item.y = item.y - 15
-          if (item.y < 0) {
-            item.destroy()
-          }
-        })
+      //   if (keySpaceObj.isUp === true) {
+      //     this.fireMissile = false
+      //   }
+      //   this.missileGroup.children.each(function (item) {
+      //     item.y = item.y - 15
+      //     if (item.y < 0) {
+      //       item.destroy()
+      //     }
+      //   })
       }
     }
   
