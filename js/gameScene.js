@@ -14,32 +14,32 @@ class GameScene extends Phaser.Scene {
     /**
      * this method is the constructor
      */
-  
-    createCar (tier) {
+    
+    createCar() {
+      console.log("check")
         //car's spawn position 
-      if (tier==1) {
-        const carXPosition = //pass = TIER 1
-        pass
-      } else if(tier==2) {
-        const carXPosition = //pass = TIER 1 + P
-        pass
-      } else {
-        const carXPosition = //pass = TIER 1 + P + R
-        pass
-      }
+      if (this.tier==1) {
+        this.carXPosition = 1900 / 2 - 300
+      } 
+      // else if(tier==2) {
+      //   const carXPosition = //pass = TIER 1 + P
+      //   pass
+      // } else {
+      //   const carXPosition = //pass = TIER 1 + P + R
+      //   pass
+      // }
       for(let counter=1;counter>=10;counter++) {
+        console.log(this.carLevel)
         if(counter == this.carLevel) {  //car level
-          const newCar = this.physics.add.sprite(carXLocation, -100, ('carLv' + counter))
-          break
+          this.newCar = this.physics.add.sprite(carXLocation, -100, "carLv1")
+          continue
         }
       }
-      this.carGroup.add(newCar)
+      newCar.body.velocity.y = 200
+      newCar.body.velocity.x = 0
+      this.carGroup.add(this.newCar)
 
-      this.carGroup.children.each(function (item) {
-        item.y = item.y - 15
-        if (item.y < pass) { //meet the same y of belt
-        }
-      })
+      
     }
   
     constructor() {
@@ -57,11 +57,11 @@ class GameScene extends Phaser.Scene {
       this.carLv9 = null
       this.carLv10 = null
       this.conveyorBelt = null
-      this.tier = 0
+      this.tier = 1
       this.tierText = null
       this.money = 0
       this.moneyText = null
-      this.carLevel = 0
+      this.carLevel = 1
       this.levelText = null
       this.infoTextStyle = {font: '65px Arial', fill:'#ffffff', align: 'center'}
     }
@@ -85,7 +85,7 @@ class GameScene extends Phaser.Scene {
     //image
     this.load.image("factoryBackground", "./assets/factoryBackground.png")
     this.load.image("machine1", "./assets/machine1.png")
-    this.load.image("Im-hungry", "./assets/conveyorbelt-test.png")
+    this.load.image("belt", "./assets/conveyorbelt-test.png")
     this.load.image("carLv1", "./assets/Biat-lv1.png")
     this.load.image("carLv2", "./assets/Fride-lv2.png")
     this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
@@ -98,6 +98,8 @@ class GameScene extends Phaser.Scene {
     // this.load.image("carLv10", ".assets/Biat-lv1.png") //not yet
     //sound
     this.load.audio('Bonk', './assets/Bonk.wav')
+    this.load.audio('cash', './assets/Cash-register-SFX.mp3')
+    this.load.audio('ham', './assets/factoryLevelUpSFX.mp3')
   }   
    
     /**
@@ -117,9 +119,9 @@ class GameScene extends Phaser.Scene {
       this.carGroup = this.physics.add.group()
   
       //create a  producer
-      this.machine = this.add.image(1900 / 2, 1080 / 2, "machine1").setScale(1.1)
+      this.machine = this.add.image(1900 / 2 - 300, 1080 / 2 - 200, "machine1").setScale(1.1)
 
-      this.belt = this.add.image(1900 / 2, 1080 / 2, "Im-hungry").setScale(1.1)
+      this.belt = this.add.image(1900 / 2, 1080 / 2 + 300, "belt").setScale(3.0)
   
   
       //collisions between belt and car
@@ -127,16 +129,6 @@ class GameScene extends Phaser.Scene {
         this.sound.play('Bonk')   
       }.bind(this))    
       
-      //null
-      this.physics.add.collider(this.ship, this.alienGroup, function (shipCollide, alienCollide) {
-        this.sound.play('bomb')
-        this.physics.pause()
-        alienCollide.destroy()
-        shipCollide.destroy()
-        this.gameOverText = this.add.text(1920 / 2, 1080 / 2, "Game Over! \nclick to play again.", this.gameOverTextStyle).setOrigin(0.5)
-        this.gameOverText.setInteractive({ useHandCursor: true})     //interaction
-        this.gameOverText.on('pointerdown', ()=> this.scene.start('gameScene'))
-      }.bind(this))
     } 
 
     /**
@@ -147,41 +139,42 @@ class GameScene extends Phaser.Scene {
    */  
 
     update(time, delta) {
-      const keyLeftObj = this.input.keyboard.addKey("LEFT")
-      const keyRightObj = this.input.keyboard.addKey("RIGHT")
+
+      
+      // const keyLeftObj = this.input.keyboard.addKey("LEFT")
+      // const keyRightObj = this.input.keyboard.addKey("RIGHT")
       const keySpaceObj = this.input.keyboard.addKey("SPACE")
   
-      // if (keyLeftObj.isDown === true) {
-      //   this.ship.x -= 15
-      //   if (this.ship.x <0) {
-      //     this.ship.x = 0
-      //   }
-      // }
-      // if (keyRightObj.isDown === true) {
-      //   this.ship.x += 15
-      //   if (this.ship.x > 1920) {
-      //     this.ship.x = 1920
-      //   }
-      // }
-      // if (keySpaceObj.isDown === true) {
-      //   if (this.fireMissile === false) {
-      //       //fire missile
-      //       this.fireMissile = true
-      //       const aNewMissile = this.physics.add.sprite(this.ship.x, this.ship.y, 'missile')
-      //       this.missileGroup.add(aNewMissile)
-      //       this.sound.play('laser')
-      //     }
-      //   }
-  
-      //   if (keySpaceObj.isUp === true) {
-      //     this.fireMissile = false
-      //   }
-      //   this.missileGroup.children.each(function (item) {
-      //     item.y = item.y - 15
-      //     if (item.y < 0) {
-      //       item.destroy()
-      //     }
-      //   })
+      if (keySpaceObj.isDown === true) {
+        this.createCar()
+        }
+        this.carGroup.children.each(function (item) {
+        item.y = item.y - 10
+        while (item.y < 1080 / 2 + 310) { //meet the same y of belt
+          item.x = item.x + 10 // I'll change it to 
+        }
+      })
+
+
+      if (keySpaceObj.isDown === true) {
+      if (this.fireMissile === false) {
+          //fire missile
+          this.fireMissile = true
+          const aNewMissile = this.physics.add.sprite(this.ship.x, this.ship.y, 'missile')
+          this.missileGroup.add(aNewMissile)
+          this.sound.play('laser')
+        }
+      }
+
+      if (keySpaceObj.isUp === true) {
+        this.fireMissile = false
+      }
+      this.missileGroup.children.each(function (item) {
+        item.y = item.y - 15
+        if (item.y < 0) {
+          item.destroy()
+        }
+      })
       }
     }
   
