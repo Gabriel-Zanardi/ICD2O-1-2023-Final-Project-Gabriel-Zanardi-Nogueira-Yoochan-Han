@@ -17,30 +17,9 @@ class GameScene extends Phaser.Scene {
     
     createCar() {
       console.log("check")
-        //car's spawn position 
-      if (this.tier==1) {
-        this.carXPosition = 1900 / 2 - 300
+      const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, 'carLv1')
+       this.carGroup.add(newCar)
       } 
-      // else if(tier==2) {
-      //   const carXPosition = //pass = TIER 1 + P
-      //   pass
-      // } else {
-      //   const carXPosition = //pass = TIER 1 + P + R
-      //   pass
-      // }
-      for(let counter=1;counter>=10;counter++) {
-        console.log(this.carLevel)
-        if(counter == this.carLevel) {  //car level
-          this.newCar = this.physics.add.sprite(carXLocation, -100, "carLv1")
-          continue
-        }
-      }
-      newCar.body.velocity.y = 200
-      newCar.body.velocity.x = 0
-      this.carGroup.add(this.newCar)
-
-      
-    }
   
     constructor() {
       super({ key: "gameScene"})
@@ -121,7 +100,7 @@ class GameScene extends Phaser.Scene {
       //create a  producer
       this.machine = this.add.image(1900 / 2 - 300, 1080 / 2 - 200, "machine1").setScale(1.1)
 
-      this.belt = this.add.image(1900 / 2, 1080 / 2 + 300, "belt").setScale(3.0)
+      this.belt = this.add.image(1900 / 2 + 150, 1080 / 2 + 450, "belt").setScale(3.0)
   
   
       //collisions between belt and car
@@ -144,36 +123,25 @@ class GameScene extends Phaser.Scene {
       // const keyLeftObj = this.input.keyboard.addKey("LEFT")
       // const keyRightObj = this.input.keyboard.addKey("RIGHT")
       const keySpaceObj = this.input.keyboard.addKey("SPACE")
-  
+      const keyRightObj = this.input.keyboard.addKey("RIGHT")
+      const keyLeftObj = this.input.keyboard.addKey("LEFT")
+      
+      if (keyLeftObj.isDown === true) { //cheat Lv-
+        this.carLevel -= 1
+      }
+
+      if (keyRightObj.isDown === true) { //cheat Lv+
+        this.carLevel += 1
+      }
+
       if (keySpaceObj.isDown === true) {
-        this.createCar()
+            this.createCar()
         }
         this.carGroup.children.each(function (item) {
-        item.y = item.y - 10
-        while (item.y < 1080 / 2 + 310) { //meet the same y of belt
-          item.x = item.x + 10 // I'll change it to 
-        }
-      })
-
-
-      if (keySpaceObj.isDown === true) {
-      if (this.fireMissile === false) {
-          //fire missile
-          this.fireMissile = true
-          const aNewMissile = this.physics.add.sprite(this.ship.x, this.ship.y, 'missile')
-          this.missileGroup.add(aNewMissile)
-          this.sound.play('laser')
-        }
-      }
-
-      if (keySpaceObj.isUp === true) {
-        this.fireMissile = false
-      }
-      this.missileGroup.children.each(function (item) {
-        item.y = item.y - 15
-        if (item.y < 0) {
-          item.destroy()
-        }
+        
+        if (item.y < 1080 / 2 + 310) { //meet the same y of belt
+          item.y = item.y + 10 // I'll change it to 
+        }else{item.x = item.x + 10}
       })
       }
     }
