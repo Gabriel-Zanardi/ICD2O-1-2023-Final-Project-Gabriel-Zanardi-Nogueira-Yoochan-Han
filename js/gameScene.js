@@ -18,6 +18,7 @@ class GameScene extends Phaser.Scene {
     createCar() {
       console.log("check")
       const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, 'carLv1')
+      delay: this.makeDelay
        this.carGroup.add(newCar)
       } 
   
@@ -36,12 +37,14 @@ class GameScene extends Phaser.Scene {
       this.carLv9 = null
       this.carLv10 = null
       this.conveyorBelt = null
+      this.seller = null
       this.tier = 1
       this.tierText = null
       this.money = 0
       this.moneyText = null
       this.carLevel = 1
       this.levelText = null
+      this.makeDelay = 2000
       this.infoTextStyle = {font: '65px Arial', fill:'#ffffff', align: 'center'}
     }
   
@@ -65,6 +68,7 @@ class GameScene extends Phaser.Scene {
     this.load.image("factoryBackground", "./assets/factoryBackground.png")
     this.load.image("machine1", "./assets/machine1.png")
     this.load.image("belt", "./assets/conveyorbelt-test.png")
+    this.load.image("seller", "./assets/sell-machine-test.png")
     this.load.image("carLv1", "./assets/Biat-lv1.png")
     this.load.image("carLv2", "./assets/Fride-lv2.png")
     this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
@@ -93,23 +97,30 @@ class GameScene extends Phaser.Scene {
       this.moneyText = this.add.text(10, 10, "Money: " + this.money.toString(), this.infoTextStyle).setScale(0.8)
       this.tierText = this.add.text(10, 60, "Factory Tier: " + this.tier.toString(), this.infoTextStyle).setScale(0.8)
       this.levelText = this.add.text(10, 110, "Level: " + this.carLevel.toString(), this.infoTextStyle).setScale(0.8)
-      
+
       //create a group for the missiles 
       this.carGroup = this.physics.add.group()
   
       //create a  producer
       this.machine = this.add.image(1900 / 2 - 300, 1080 / 2 - 200, "machine1").setScale(1.1)
-
+      
       this.belt = this.add.image(1900 / 2 + 150, 1080 / 2 + 450, "belt").setScale(3.0)
+      // this.seller = this.add.image(1900 / 2 + 460, 1080 / 2 + 420, "seller").setScale(0.8)
+      this.seller = this.physics.add.sprite(1900 / 2 + 460, 1080 / 2 + 420, 'seller').setScale(0.8)
   
-  
-      //collisions between belt and car
-      this.physics.add.collider(this.belt, this.carGroup, function(beltCollide, carCollide) {
-        this.sound.play('Bonk')   
+      this.createCar()
+      //collisions between seller and car
+      this.physics.add.collider(this.seller, this.carGroup, function(sellerCollide, carCollide) {
+        carCollide.destroy()
+        this.sound.play('cash') 
+        this.money = this.money + 50
+      this.moneyText.setText('Money: ' + this.money.toString())
       }.bind(this))    
+
       
     } 
 
+    
     /**
    * Should be overridden by your own Scenes.
    * This method is called once per game step while the scene is running 
@@ -119,6 +130,13 @@ class GameScene extends Phaser.Scene {
 
     update(time, delta) {
 
+      this.time.addEvent({
+        delay: 500,
+        callback: ()=>{
+            this.createCar()
+        },
+        loop: false
+      })
       
       // const keyLeftObj = this.input.keyboard.addKey("LEFT")
       // const keyRightObj = this.input.keyboard.addKey("RIGHT")
@@ -127,15 +145,19 @@ class GameScene extends Phaser.Scene {
       const keyLeftObj = this.input.keyboard.addKey("LEFT")
       
       if (keyLeftObj.isDown === true) { //cheat Lv-
-        this.carLevel -= 1
+        this.carLevel = this.carLevel - 1
+        this.levelText.setText('Money: ' + this.carLevel.toString())
       }
 
       if (keyRightObj.isDown === true) { //cheat Lv+
-        this.carLevel += 1
+        this.carLevel = this.carLevel + 1
+        this.levelText.setText('Money: ' + this.carLevel.toString())
+        
       }
 
       if (keySpaceObj.isDown === true) {
             this.createCar()
+
         }
         this.carGroup.children.each(function (item) {
         
