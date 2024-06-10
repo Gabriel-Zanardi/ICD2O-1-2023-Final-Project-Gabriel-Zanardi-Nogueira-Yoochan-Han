@@ -10,15 +10,17 @@
 /**
  * This class is he Game Scene.
  */
+
+//{TODO}: make buttons for upgrade the levels and make them local\n june 10
+
 class GameScene extends Phaser.Scene {
     /**
      * this method is the constructor
      */
-    
+
     createCar() {
       console.log("check")
       const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, 'carLv1')
-      delay: this.makeDelay
        this.carGroup.add(newCar)
       } 
   
@@ -44,7 +46,8 @@ class GameScene extends Phaser.Scene {
       this.moneyText = null
       this.carLevel = 1
       this.levelText = null
-      this.makeDelay = 2000
+      this.DelayLevel = 2000
+
       this.infoTextStyle = {font: '65px Arial', fill:'#ffffff', align: 'center'}
     }
   
@@ -106,7 +109,7 @@ class GameScene extends Phaser.Scene {
       
       this.belt = this.add.image(1900 / 2 + 150, 1080 / 2 + 450, "belt").setScale(3.0)
       // this.seller = this.add.image(1900 / 2 + 460, 1080 / 2 + 420, "seller").setScale(0.8)
-      this.seller = this.physics.add.sprite(1900 / 2 + 460, 1080 / 2 + 420, 'seller').setScale(0.8)
+      this.seller = this.physics.add.sprite(1900 / 2 + 460, 1080 / 2 + 420, 'seller').setScale(0.8).setOffset(140, 0);
   
       this.createCar()
       //collisions between seller and car
@@ -129,15 +132,13 @@ class GameScene extends Phaser.Scene {
    */  
 
     update(time, delta) {
-
-      this.time.addEvent({
-        delay: 500,
-        callback: ()=>{
-            this.createCar()
-        },
-        loop: false
-      })
+      console.log(time.toFixed(0) % this.DelayLevel)
+      if (time.toFixed(0) % this.DelayLevel <= 20) { //delay
+        this.createCar()
+      }
+    
       
+    
       // const keyLeftObj = this.input.keyboard.addKey("LEFT")
       // const keyRightObj = this.input.keyboard.addKey("RIGHT")
       const keySpaceObj = this.input.keyboard.addKey("SPACE")
@@ -145,13 +146,13 @@ class GameScene extends Phaser.Scene {
       const keyLeftObj = this.input.keyboard.addKey("LEFT")
       
       if (keyLeftObj.isDown === true) { //cheat Lv-
-        this.carLevel = this.carLevel - 1
-        this.levelText.setText('Money: ' + this.carLevel.toString())
+        this.DelayLevel = this.DelayLevel + 200
+        this.levelText.setText('Level: ' + this.DelayLevel.toString())
       }
 
       if (keyRightObj.isDown === true) { //cheat Lv+
-        this.carLevel = this.carLevel + 1
-        this.levelText.setText('Money: ' + this.carLevel.toString())
+        this.DelayLevel = this.DelayLevel - 200
+        this.levelText.setText('Level: ' + this.DelayLevel.toString())
         
       }
 
