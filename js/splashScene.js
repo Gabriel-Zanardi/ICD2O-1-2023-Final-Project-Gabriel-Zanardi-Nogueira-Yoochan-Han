@@ -6,6 +6,7 @@
 // Created on: May 2024
 // This file contains the JS functions for index.html
 
+
 /**
  * This class is Splash Scene.
  */
