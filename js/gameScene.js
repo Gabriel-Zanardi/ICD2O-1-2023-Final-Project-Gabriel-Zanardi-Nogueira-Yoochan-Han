@@ -20,7 +20,9 @@ class GameScene extends Phaser.Scene {
 
     createCar() {
       console.log("check")
-      const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, 'carLv1')
+      const Cars = "carLv" + this.carLevel.toString()
+      console.log(Cars)
+      const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, Cars)
        this.carGroup.add(newCar)
       } 
   
@@ -42,11 +44,14 @@ class GameScene extends Phaser.Scene {
       this.seller = null
       this.tier = 1
       this.tierText = null
-      this.money = 0
+      this.money = 0.0
       this.moneyText = null
       this.carLevel = 1
       this.levelText = null
-      this.DelayLevel = 2000
+      this.delayLevel = 2000
+      this.delayText = null
+      this.carUpgrade = null
+      this.factoryUpgrade = null
 
       this.infoTextStyle = {font: '65px Arial', fill:'#ffffff', align: 'center'}
     }
@@ -71,7 +76,9 @@ class GameScene extends Phaser.Scene {
     this.load.image("factoryBackground", "./assets/factoryBackground.png")
     this.load.image("machine1", "./assets/machine1.png")
     this.load.image("belt", "./assets/conveyorbelt-test.png")
-    this.load.image("seller", "./assets/sell-machine-test.png")
+    this.load.image("seller", "./assets/seller.png")
+    this.load.image("factoryUpgrade","./assets/Button-Upgrade-Factory.png")
+    this.load.image("carUpgrade","./assets/Buttoon-Upgrade-Car.png")
     this.load.image("carLv1", "./assets/Biat-lv1.png")
     this.load.image("carLv2", "./assets/Fride-lv2.png")
     this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
@@ -80,7 +87,7 @@ class GameScene extends Phaser.Scene {
     // this.load.image("carLv6", ".assets/Biat-lv1.png")  //not yet
     // this.load.image("carLv7", ".assets/Biat-lv1.png")  //not yet
     this.load.image("carLv8", "./assets/Igniz-lv8.png")
-    // this.load.image("carLv9", ".assets/Biat-lv1.png")  //not yet
+    // this.load.image("carv9", ".assets/Biat-lv1.png")  //not yet
     // this.load.image("carLv10", ".assets/Biat-lv1.png") //not yet
     //sound
     this.load.audio('Bonk', './assets/Bonk.wav')
@@ -96,22 +103,25 @@ class GameScene extends Phaser.Scene {
     create(data) { 
       this.background = this.add.image(0, 0, "factoryBackground").setScale(2.0)
       this.background.setOrigin(0, 0)
-  
+      //craete texts
       this.moneyText = this.add.text(10, 10, "Money: " + this.money.toString(), this.infoTextStyle).setScale(0.8)
-      this.tierText = this.add.text(10, 60, "Factory Tier: " + this.tier.toString(), this.infoTextStyle).setScale(0.8)
-      this.levelText = this.add.text(10, 110, "Level: " + this.carLevel.toString(), this.infoTextStyle).setScale(0.8)
+      this.levelText = this.add.text(10, 60, "Level: " + this.carLevel.toString(), this.infoTextStyle).setScale(0.8)
+      this.delayText = this.add.text(10, 110, "Machine Speed: " + this.delayLevel.toString(), this.infoTextStyle).setScale(0.8)
+
+      //buttons
+      this.carUpButton = this.add.image(180, 300, "carUpgrade").setScale(0.8) // car level
+      this.spdUpButon = this.add.image(180, 460, "factoryUpgrade").setScale(0.8) //Machine speed
 
       //create a group for the missiles 
       this.carGroup = this.physics.add.group()
   
       //create a  producer
       this.machine = this.add.image(1900 / 2 - 300, 1080 / 2 - 200, "machine1").setScale(1.1)
-      
+      //belt
       this.belt = this.add.image(1900 / 2 + 150, 1080 / 2 + 450, "belt").setScale(3.0)
-      // this.seller = this.add.image(1900 / 2 + 460, 1080 / 2 + 420, "seller").setScale(0.8)
-      this.seller = this.physics.add.sprite(1900 / 2 + 460, 1080 / 2 + 420, 'seller').setScale(0.8).setOffset(140, 0);
-  
-      this.createCar()
+      //seller
+      this.seller = this.physics.add.sprite(1900 / 2 + 700, 1080 / 2 + 230, 'seller').setScale(1.7).setOffset(40, 0);
+      
       //collisions between seller and car
       this.physics.add.collider(this.seller, this.carGroup, function(sellerCollide, carCollide) {
         carCollide.destroy()
@@ -131,34 +141,46 @@ class GameScene extends Phaser.Scene {
    * @param {number} delta - The delta time in ms since the last frame.
    */  
 
+    //every delay(second) call createCar() 
     update(time, delta) {
-      console.log(time.toFixed(0) % this.DelayLevel)
-      if (time.toFixed(0) % this.DelayLevel <= 20) { //delay
+      console.log(time.toFixed(0) % this.delayLevel)
+      if (time.toFixed(0) % this.delayLevel <= 20) { //delay
         this.createCar()
       }
     
+
       
-    
-      // const keyLeftObj = this.input.keyboard.addKey("LEFT")
-      // const keyRightObj = this.input.keyboard.addKey("RIGHT")
+    //cheat key
       const keySpaceObj = this.input.keyboard.addKey("SPACE")
       const keyRightObj = this.input.keyboard.addKey("RIGHT")
       const keyLeftObj = this.input.keyboard.addKey("LEFT")
+      const keyShiftObj = this.input.keyboard.addKey("SHIFT")
+      const keyUpObj = this.input.keyboard.addKey("UP")
+      const keyDownObj = this.input.keyboard.addKey("Down")
       
-      if (keyLeftObj.isDown === true) { //cheat Lv-
-        this.DelayLevel = this.DelayLevel + 200
-        this.levelText.setText('Level: ' + this.DelayLevel.toString())
+      if (keyDownObj.isDown === true && keyShiftObj.isDown === true) { //cheat Lv-
+        this.carLevel = this.carLevel - 1
+        this.levelText.setText('Car Level: ' + this.carLevel.toString())
       }
 
-      if (keyRightObj.isDown === true) { //cheat Lv+
-        this.DelayLevel = this.DelayLevel - 200
-        this.levelText.setText('Level: ' + this.DelayLevel.toString())
+      if (keyUpObj.isDown === true && keyShiftObj.isDown === true) { //cheat Lv-
+        this.carLevel = this.carLevel + 1
+        this.levelText.setText('Car Level: ' + this.carLevel.toString())
+      }
+
+      if (keyLeftObj.isDown === true && keyShiftObj.isDown === true) { //cheat delay-
+        this.delayLevel = this.delayLevel - 50
+        this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
+      }
+
+      if (keyRightObj.isDown === true && keyShiftObj.isDown === true)  { //cheat delay+
+        this.delayLevel = this.delayLevel + 50
+        this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
         
       }
 
-      if (keySpaceObj.isDown === true) {
+      if (keySpaceObj.isDown === true && keyShiftObj.isDown === true) { //craete acr cheat
             this.createCar()
-
         }
         this.carGroup.children.each(function (item) {
         
