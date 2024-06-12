@@ -25,7 +25,23 @@ class GameScene extends Phaser.Scene {
       const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, Cars)
        this.carGroup.add(newCar)
       } 
-  
+      
+      imSoviet() {
+        const upgradeCost = 500*1.4*this.delayLevel
+        if(this.money >= upgradeCost) {
+          this.money -= upgradeCost
+          this.delayLevel += 1
+        }
+      }
+
+      imHungary() {
+        const upgradeCost = 500*1.4*this.carLevel
+        if(this.money >= upgradeCost) {
+          this.money -= upgradeCost
+          this.carLevel += 1
+        }
+      }
+
     constructor() {
       super({ key: "gameScene"})
   
@@ -52,8 +68,10 @@ class GameScene extends Phaser.Scene {
       this.delayText = null
       this.carUpgrade = null
       this.factoryUpgrade = null
+      this.alertMoneyText = null
 
       this.infoTextStyle = {font: '65px Arial', fill:'#ffffff', align: 'center'}
+      this.alertTextStyle = {font: '110px Arial', fill:'#ee1111', align: 'center'}
     }
   
     /**
@@ -107,14 +125,19 @@ class GameScene extends Phaser.Scene {
       this.moneyText = this.add.text(10, 10, "Money: " + this.money.toString(), this.infoTextStyle).setScale(0.8)
       this.levelText = this.add.text(10, 60, "Level: " + this.carLevel.toString(), this.infoTextStyle).setScale(0.8)
       this.delayText = this.add.text(10, 110, "Machine Speed: " + this.delayLevel.toString(), this.infoTextStyle).setScale(0.8)
-
       //buttons
+      //car Upgrade
       this.carUpButton = this.add.image(180, 300, "carUpgrade").setScale(0.8) // car level
+      this.carUpButton.setInteractive({ useHandCursor: true})
+      this.carUpButton.on('pointerdown', ()=> this.imHungary())
+      //machine uprade
       this.spdUpButon = this.add.image(180, 460, "factoryUpgrade").setScale(0.8) //Machine speed
+      this.spdUpButon.setInteractive({ useHandCursor: true})
+      this.spdUpButon.on('pointerdown', ()=> this.imGermany())
+
 
       //create a group for the missiles 
       this.carGroup = this.physics.add.group()
-  
       //create a  producer
       this.machine = this.add.image(1900 / 2 - 300, 1080 / 2 - 200, "machine1").setScale(1.1)
       //belt
@@ -140,6 +163,8 @@ class GameScene extends Phaser.Scene {
    * @param {number} time - The current time.
    * @param {number} delta - The delta time in ms since the last frame.
    */  
+    
+    
 
     //every delay(second) call createCar() 
     update(time, delta) {
@@ -157,7 +182,7 @@ class GameScene extends Phaser.Scene {
       const keyShiftObj = this.input.keyboard.addKey("SHIFT")
       const keyUpObj = this.input.keyboard.addKey("UP")
       const keyDownObj = this.input.keyboard.addKey("Down")
-      
+  
       if (keyDownObj.isDown === true && keyShiftObj.isDown === true) { //cheat Lv-
         this.carLevel = this.carLevel - 1
         this.levelText.setText('Car Level: ' + this.carLevel.toString())
@@ -179,9 +204,10 @@ class GameScene extends Phaser.Scene {
         
       }
 
-      if (keySpaceObj.isDown === true && keyShiftObj.isDown === true) { //craete acr cheat
+      if (keySpaceObj.isDown === true && keyShiftObj.isDown === true) { //craete car cheat
             this.createCar()
         }
+
         this.carGroup.children.each(function (item) {
         
         if (item.y < 1080 / 2 + 310) { //meet the same y of belt
