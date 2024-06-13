@@ -7,7 +7,7 @@
 // This file contains the JS functions for index.html
 
 /**
- * This class is Splash Scene.
+ * This class is Title Scene.
  */
 class TitleScene extends Phaser.Scene {
     /**
@@ -47,7 +47,7 @@ class TitleScene extends Phaser.Scene {
     /**
      * Can be defined on your own Scenes.
      * Use it to create your game objects.
-     * @param {object} data - Any dara passed via ScenePlugin.add() or ScenePlugin.start() 
+     * @param {object} data - Any data passed via ScenePlugin.add() or ScenePlugin.start() 
      */
     create(data) {
       this.titleSceneBackgroundImage = this.add
