@@ -107,10 +107,10 @@ class GameScene extends Phaser.Scene {
     this.load.image("carLv1", "./assets/Biat-lv1.png")
     this.load.image("carLv2", "./assets/Fride-lv2.png")
     this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
-    // this.load.image("carLv4", ".assets/Biat-lv1.png")  //not yet
+    this.load.image("carLv4", "./assets/A'sCar-lv4.png")  //not yet
     // this.load.image("carLv5", ".assets/Biat-lv1.png")  //not yet
-    // this.load.image("carLv6", ".assets/Biat-lv1.png")  //not yet
-    // this.load.image("carLv7", ".assets/Biat-lv1.png")  //not yet
+    this.load.image("carLv6", "./assets/cakedilock-lv6.png")  //not yet
+    this.load.image("carLv7", "./assets/ciderTruck-lv7.png")  //not yet
     this.load.image("carLv8", "./assets/Igniz-lv8.png")
     // this.load.image("carv9", ".assets/Biat-lv1.png")  //not yet
     // this.load.image("carLv10", ".assets/Biat-lv1.png") //not yet
@@ -156,7 +156,7 @@ class GameScene extends Phaser.Scene {
       this.physics.add.collider(this.seller, this.carGroup, function(sellerCollide, carCollide) {
         carCollide.destroy()
         this.sound.play('cash')
-        this.money += 70 + 20*this.carLevel
+        this.money += (70 + 30*this.carLevel)*1.3
         this.moneyText.setText('Money: ' + this.money.toString())
       }.bind(this))    
 
@@ -178,6 +178,9 @@ class GameScene extends Phaser.Scene {
       // console.log(time.toFixed(0) % this.delayLevel) //test code
       if (time.toFixed(0) % this.delayLevel <= 20) { //delay
         this.createCar()
+        localStorage.setItem('money',GameScene.money) //auto save every car spawned
+        localStorage.setItem('carLevel',GameScene.carLevel)
+        localStorage.setItem('delayLevel',GameScene.delayLevel)
       }
     
 
@@ -223,7 +226,4 @@ class GameScene extends Phaser.Scene {
       })
       }
     }
-    localStorage.setItem('money',GameScene.money)
-    localStorage.setItem('carLevel',GameScene.carLevel)
-    localStorage.setItem('delayLevel',GameScene.delayLevel)
   export default GameScene
