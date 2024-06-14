@@ -7,7 +7,7 @@
 // This file contains the JS functions for index.html
 
 /**
- * This class is Splash Scene.
+ * This class is Menu Scene.
  */
 class MenuScene extends Phaser.Scene {
     /**
@@ -25,7 +25,7 @@ class MenuScene extends Phaser.Scene {
      * Can be defined on your own Scenes.
      * This method is called by the Scene Manager when the scene starts,
      * before preload() and create().
-     * @param {object} data - Any dara passed via ScenePlugin.add() or ScenePlugin.start()
+     * @param {object} data - Any data passed via ScenePlugin.add() or ScenePlugin.start()
      */
     init(data) {
       this.cameras.main.setBackgroundColor("#ffffff")
