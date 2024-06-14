@@ -22,29 +22,38 @@ class GameScene extends Phaser.Scene {
       console.log("check")
       const Cars = "carLv" + this.carLevel.toString()
       console.log(Cars)
-      const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, Cars)
+      if(this.carLevel == 5) {
+        let scale = 0.6
+      }else if(this.carLevel == 7) {
+        const scale = 0.8
+      }else{const scale = 1.0}
+      const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, Cars).setScale(scale)
        this.carGroup.add(newCar)
       } 
       
-      imGermany() {
+      UpgradeMachine() {
         const upgradeCost = 800*1.6+(2500 - this.delayLevel)
         if(this.money >= upgradeCost) {
           this.money -= upgradeCost
           this.delayLevel -= 100
           this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
-          this.sound.play('ham') 
+          localStorage.setItem('money',GameScene.money) //auto save
+          localStorage.setItem('delayLevel',GameScene.delayLevel)
+          this.sound.play('upgradeSound') 
         }else{
           alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
         }
       }
 
-      imHungary() {
+      UpgradeCar() {
         const upgradeCost = 1000*1.6*this.carLevel
         if(this.money >= upgradeCost) {
           this.money -= upgradeCost
           this.carLevel += 1
           this.levelText.setText('Car Level: ' + this.carLevel.toString())
-          this.sound.play('ham') 
+          this.sound.play('carUpgradeSound') 
+          localStorage.setItem('money',GameScene.money) //auto save
+          localStorage.setItem('carLevel',GameScene.carLevel)
         }else{
           alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
         }
@@ -108,16 +117,16 @@ class GameScene extends Phaser.Scene {
     this.load.image("carLv2", "./assets/Fride-lv2.png")
     this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
     this.load.image("carLv4", "./assets/A'sCar-lv4.png")  //not yet
-    // this.load.image("carLv5", ".assets/Biat-lv1.png")  //not yet
+    this.load.image("carLv5", "./assets/lowrider-lv5.png")
     this.load.image("carLv6", "./assets/cakedilock-lv6.png")  //not yet
-    this.load.image("carLv7", "./assets/ciderTruck-lv7.png")  //not yet
+    this.load.image("carLv7", "./assets/ciderTruck-lv7.png")
     this.load.image("carLv8", "./assets/Igniz-lv8.png")
-    // this.load.image("carv9", ".assets/Biat-lv1.png")  //not yet
-    // this.load.image("carLv10", ".assets/Biat-lv1.png") //not yet
+    this.load.image("carLv9", "./assets/primemachine-lv9.png")  //not yet
+    this.load.image("carLv10", "./assets/Ayrton'sSoul-lv10.png") //not yet
     //sound
-    this.load.audio('Bonk', './assets/Bonk.wav')
+    this.load.audio('carUpgradeSound', './assets/Bonk.wav')
     this.load.audio('cash', './assets/Cash-register-SFX.mp3')
-    this.load.audio('ham', './assets/factoryLevelUpSFX.mp3')
+    this.load.audio('upgradeSound', './assets/factoryLevelUpSFX.mp3')
   }   
    
     /**
@@ -130,17 +139,17 @@ class GameScene extends Phaser.Scene {
       this.background.setOrigin(0, 0)
       //craete texts
       this.moneyText = this.add.text(10, 10, "Money: " + this.money.toString(), this.infoTextStyle).setScale(0.8)
-      this.levelText = this.add.text(10, 60, "Level: " + this.carLevel.toString(), this.infoTextStyle).setScale(0.8)
+      this.levelText = this.add.text(10, 60, "Car Level: " + this.carLevel.toString(), this.infoTextStyle).setScale(0.8)
       this.delayText = this.add.text(10, 110, "Machine Speed: " + this.delayLevel.toString(), this.infoTextStyle).setScale(0.8)
       //buttons
       //car Upgrade
       this.carUpButton = this.add.image(180, 300, "carUpgrade").setScale(0.8) // car level
       this.carUpButton.setInteractive({ useHandCursor: true})
-      this.carUpButton.on('pointerdown', ()=> this.imHungary())
+      this.carUpButton.on('pointerdown', ()=> this.UpgradeCar())
       //machine uprade
       this.spdUpButon = this.add.image(180, 460, "factoryUpgrade").setScale(0.8) //Machine speed
       this.spdUpButon.setInteractive({ useHandCursor: true})
-      this.spdUpButon.on('pointerdown', ()=> this.imGermany())
+      this.spdUpButon.on('pointerdown', ()=> this.UpgradeMachine())
 
 
       //create a group for the missiles 
@@ -178,9 +187,6 @@ class GameScene extends Phaser.Scene {
       // console.log(time.toFixed(0) % this.delayLevel) //test code
       if (time.toFixed(0) % this.delayLevel <= 20) { //delay
         this.createCar()
-        localStorage.setItem('money',GameScene.money) //auto save every car spawned
-        localStorage.setItem('carLevel',GameScene.carLevel)
-        localStorage.setItem('delayLevel',GameScene.delayLevel)
       }
     
 
