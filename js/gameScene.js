@@ -26,19 +26,27 @@ class GameScene extends Phaser.Scene {
        this.carGroup.add(newCar)
       } 
       
-      imSoviet() {
-        const upgradeCost = 500*1.4*this.delayLevel
+      imGermany() {
+        const upgradeCost = 800*1.6+(2500 - this.delayLevel)
         if(this.money >= upgradeCost) {
           this.money -= upgradeCost
-          this.delayLevel += 1
+          this.delayLevel -= 100
+          this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
+          this.sound.play('ham') 
+        }else{
+          alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
         }
       }
 
       imHungary() {
-        const upgradeCost = 500*1.4*this.carLevel
+        const upgradeCost = 1000*1.6*this.carLevel
         if(this.money >= upgradeCost) {
           this.money -= upgradeCost
           this.carLevel += 1
+          this.levelText.setText('Car Level: ' + this.carLevel.toString())
+          this.sound.play('ham') 
+        }else{
+          alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
         }
       }
 
@@ -58,13 +66,12 @@ class GameScene extends Phaser.Scene {
       this.carLv10 = null
       this.conveyorBelt = null
       this.seller = null
-      this.tier = 1
       this.tierText = null
-      this.money = 0.0
+      this.money = parseFloat(localStorage.getItem('money')) || 0.0
       this.moneyText = null
-      this.carLevel = 1
+      this.carLevel = parseInt(localStorage.getItem('carLevel')) || 1
       this.levelText = null
-      this.delayLevel = 2000
+      this.delayLevel = parseInt(localStorage.getItem('delayLevel')) || 2000
       this.delayText = null
       this.carUpgrade = null
       this.factoryUpgrade = null
@@ -100,10 +107,10 @@ class GameScene extends Phaser.Scene {
     this.load.image("carLv1", "./assets/Biat-lv1.png")
     this.load.image("carLv2", "./assets/Fride-lv2.png")
     this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
-    // this.load.image("carLv4", ".assets/Biat-lv1.png")  //not yet
+    this.load.image("carLv4", "./assets/A'sCar-lv4.png")  //not yet
     // this.load.image("carLv5", ".assets/Biat-lv1.png")  //not yet
-    // this.load.image("carLv6", ".assets/Biat-lv1.png")  //not yet
-    // this.load.image("carLv7", ".assets/Biat-lv1.png")  //not yet
+    this.load.image("carLv6", "./assets/cakedilock-lv6.png")  //not yet
+    this.load.image("carLv7", "./assets/ciderTruck-lv7.png")  //not yet
     this.load.image("carLv8", "./assets/Igniz-lv8.png")
     // this.load.image("carv9", ".assets/Biat-lv1.png")  //not yet
     // this.load.image("carLv10", ".assets/Biat-lv1.png") //not yet
@@ -148,9 +155,9 @@ class GameScene extends Phaser.Scene {
       //collisions between seller and car
       this.physics.add.collider(this.seller, this.carGroup, function(sellerCollide, carCollide) {
         carCollide.destroy()
-        this.sound.play('cash') 
-        this.money = this.money + 50
-      this.moneyText.setText('Money: ' + this.money.toString())
+        this.sound.play('cash')
+        this.money += (70 + 30*this.carLevel)*1.3
+        this.moneyText.setText('Money: ' + this.money.toString())
       }.bind(this))    
 
       
@@ -168,9 +175,12 @@ class GameScene extends Phaser.Scene {
 
     //every delay(second) call createCar() 
     update(time, delta) {
-      console.log(time.toFixed(0) % this.delayLevel)
+      // console.log(time.toFixed(0) % this.delayLevel) //test code
       if (time.toFixed(0) % this.delayLevel <= 20) { //delay
         this.createCar()
+        localStorage.setItem('money',GameScene.money) //auto save every car spawned
+        localStorage.setItem('carLevel',GameScene.carLevel)
+        localStorage.setItem('delayLevel',GameScene.delayLevel)
       }
     
 
@@ -216,5 +226,4 @@ class GameScene extends Phaser.Scene {
       })
       }
     }
-  
   export default GameScene
