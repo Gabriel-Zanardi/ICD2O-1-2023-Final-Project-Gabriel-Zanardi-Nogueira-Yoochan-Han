@@ -193,25 +193,43 @@ class GameScene extends Phaser.Scene {
       const keyDownObj = this.input.keyboard.addKey("Down")
   
       if (keyDownObj.isDown === true && keyShiftObj.isDown === true) { //cheat Lv-
-        this.carLevel = this.carLevel - 1
+        if(this.carLevel<= 0) {
+          this.carLevel = 1
+          this.levelText.setText('Car Level: ' + this.carLevel.toString())
+        }else{
+          this.carLevel = this.carLevel - 1
         this.levelText.setText('Car Level: ' + this.carLevel.toString())
+        }
       }
 
       if (keyUpObj.isDown === true && keyShiftObj.isDown === true) { //cheat Lv-
-        this.carLevel = this.carLevel + 1
+        if(this.carLevel>= 11) {
+          this.carLevel = 10
+          this.levelText.setText('Car Level: ' + this.carLevel.toString())
+        }else{
+          this.carLevel = this.carLevel + 1
         this.levelText.setText('Car Level: ' + this.carLevel.toString())
+        }
       }
 
       if (keyLeftObj.isDown === true && keyShiftObj.isDown === true) { //cheat delay-
-        this.delayLevel = this.delayLevel - 50
+        if(this.delayLevel <= 0){
+          this.delayLevel = 50
+          this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
+        }else{this.delayLevel = this.delayLevel - 50
         this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
+      }
+        
       }
 
       if (keyRightObj.isDown === true && keyShiftObj.isDown === true)  { //cheat delay+
-        this.delayLevel = this.delayLevel + 50
+        if(this.delayLevel >= 2000){
+          this.delayLevel = 2000
+          this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
+        }else{this.delayLevel = this.delayLevel + 50
         this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
-        
       }
+    }
 
       if (keySpaceObj.isDown === true && keyShiftObj.isDown === true) { //craete car cheat
             this.createCar()
