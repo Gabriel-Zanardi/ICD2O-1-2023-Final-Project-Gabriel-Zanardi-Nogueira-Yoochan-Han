@@ -21,13 +21,7 @@ class GameScene extends Phaser.Scene {
     createCar() {
       console.log("check")
       const Cars = "carLv" + this.carLevel.toString()
-      console.log(Cars)
-      if(this.carLevel == 5) {
-        let scale = 0.6
-      }else if(this.carLevel == 7) {
-        const scale = 0.8
-      }else{const scale = 1.0}
-      const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, Cars).setScale(scale)
+      const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, Cars).setScale(0.8)
        this.carGroup.add(newCar)
       } 
       
@@ -37,8 +31,6 @@ class GameScene extends Phaser.Scene {
           this.money -= upgradeCost
           this.delayLevel -= 100
           this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
-          localStorage.setItem('money',GameScene.money) //auto save
-          localStorage.setItem('delayLevel',GameScene.delayLevel)
           this.sound.play('upgradeSound') 
         }else{
           alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
@@ -52,8 +44,6 @@ class GameScene extends Phaser.Scene {
           this.carLevel += 1
           this.levelText.setText('Car Level: ' + this.carLevel.toString())
           this.sound.play('carUpgradeSound') 
-          localStorage.setItem('money',GameScene.money) //auto save
-          localStorage.setItem('carLevel',GameScene.carLevel)
         }else{
           alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
         }
@@ -232,4 +222,10 @@ class GameScene extends Phaser.Scene {
       })
       }
     }
+    window.onbeforeunload = function() {
+      localStorage.setItem('money',GameScene.money) //save
+    localStorage.setItem('delayLevel',GameScene.delayLevel)
+  }
+
+    
   export default GameScene
