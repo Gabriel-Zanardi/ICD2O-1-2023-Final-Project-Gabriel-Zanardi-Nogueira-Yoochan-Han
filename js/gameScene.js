@@ -66,11 +66,11 @@ class GameScene extends Phaser.Scene {
       this.conveyorBelt = null
       this.seller = null
       this.tierText = null
-      this.money = parseFloat(localStorage.getItem('money')) || 0.0
+      this.money = parseFloat(localStorage.getItem('LocalMoney')) || 0.0
       this.moneyText = null
-      this.carLevel = parseInt(localStorage.getItem('carLevel')) || 1
+      this.carLevel = parseInt(localStorage.getItem('LocalCarLevel')) || 1
       this.levelText = null
-      this.delayLevel = parseInt(localStorage.getItem('delayLevel')) || 2000
+      this.delayLevel = parseInt(localStorage.getItem('LocalDelayLevel')) || 2000
       this.delayText = null
       this.carUpgrade = null
       this.factoryUpgrade = null
@@ -177,6 +177,9 @@ class GameScene extends Phaser.Scene {
       // console.log(time.toFixed(0) % this.delayLevel) //test code
       if (time.toFixed(0) % this.delayLevel <= 20) { //delay
         this.createCar()
+        localStorage.setItem('LocalMoney',this.money) //save
+        localStorage.setItem('LocalDelayLevel',this.delayLevel)
+        localStorage.setItem('LocalCarLevel',this.carLevel)
       }
     
 
@@ -222,10 +225,7 @@ class GameScene extends Phaser.Scene {
       })
       }
     }
-    window.onbeforeunload = function() {
-      localStorage.setItem('money',GameScene.money) //save
-    localStorage.setItem('delayLevel',GameScene.delayLevel)
-  }
+    
 
     
   export default GameScene
