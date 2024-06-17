@@ -21,13 +21,7 @@ class GameScene extends Phaser.Scene {
     createCar() {
       console.log("check")
       const Cars = "carLv" + this.carLevel.toString()
-      console.log(Cars)
-      if(this.carLevel == 5) {
-        let scale = 0.6
-      }else if(this.carLevel == 7) {
-        const scale = 0.8
-      }else{const scale = 1.0}
-      const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, Cars).setScale(scale)
+      const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, Cars).setScale(0.8)
        this.carGroup.add(newCar)
       } 
       
@@ -37,8 +31,6 @@ class GameScene extends Phaser.Scene {
           this.money -= upgradeCost
           this.delayLevel -= 100
           this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
-          localStorage.setItem('money',GameScene.money) //auto save
-          localStorage.setItem('delayLevel',GameScene.delayLevel)
           this.sound.play('upgradeSound') 
         }else{
           alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
@@ -52,8 +44,6 @@ class GameScene extends Phaser.Scene {
           this.carLevel += 1
           this.levelText.setText('Car Level: ' + this.carLevel.toString())
           this.sound.play('carUpgradeSound') 
-          localStorage.setItem('money',GameScene.money) //auto save
-          localStorage.setItem('carLevel',GameScene.carLevel)
         }else{
           alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
         }
@@ -76,11 +66,11 @@ class GameScene extends Phaser.Scene {
       this.conveyorBelt = null
       this.seller = null
       this.tierText = null
-      this.money = parseFloat(localStorage.getItem('money')) || 0.0
+      this.money = parseFloat(localStorage.getItem('LocalMoney')) || 0.0
       this.moneyText = null
-      this.carLevel = parseInt(localStorage.getItem('carLevel')) || 1
+      this.carLevel = parseInt(localStorage.getItem('LocalCarLevel')) || 1
       this.levelText = null
-      this.delayLevel = parseInt(localStorage.getItem('delayLevel')) || 2000
+      this.delayLevel = parseInt(localStorage.getItem('LocalDelayLevel')) || 2000
       this.delayText = null
       this.carUpgrade = null
       this.factoryUpgrade = null
@@ -187,6 +177,9 @@ class GameScene extends Phaser.Scene {
       // console.log(time.toFixed(0) % this.delayLevel) //test code
       if (time.toFixed(0) % this.delayLevel <= 20) { //delay
         this.createCar()
+        localStorage.setItem('LocalMoney',this.money) //save
+        localStorage.setItem('LocalDelayLevel',this.delayLevel)
+        localStorage.setItem('LocalCarLevel',this.carLevel)
       }
     
 
@@ -200,25 +193,43 @@ class GameScene extends Phaser.Scene {
       const keyDownObj = this.input.keyboard.addKey("Down")
   
       if (keyDownObj.isDown === true && keyShiftObj.isDown === true) { //cheat Lv-
-        this.carLevel = this.carLevel - 1
+        if(this.carLevel<= 0) {
+          this.carLevel = 1
+          this.levelText.setText('Car Level: ' + this.carLevel.toString())
+        }else{
+          this.carLevel = this.carLevel - 1
         this.levelText.setText('Car Level: ' + this.carLevel.toString())
+        }
       }
 
       if (keyUpObj.isDown === true && keyShiftObj.isDown === true) { //cheat Lv-
-        this.carLevel = this.carLevel + 1
+        if(this.carLevel>= 11) {
+          this.carLevel = 10
+          this.levelText.setText('Car Level: ' + this.carLevel.toString())
+        }else{
+          this.carLevel = this.carLevel + 1
         this.levelText.setText('Car Level: ' + this.carLevel.toString())
+        }
       }
 
       if (keyLeftObj.isDown === true && keyShiftObj.isDown === true) { //cheat delay-
-        this.delayLevel = this.delayLevel - 50
+        if(this.delayLevel <= 0){
+          this.delayLevel = 50
+          this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
+        }else{this.delayLevel = this.delayLevel - 50
         this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
+      }
+        
       }
 
       if (keyRightObj.isDown === true && keyShiftObj.isDown === true)  { //cheat delay+
-        this.delayLevel = this.delayLevel + 50
+        if(this.delayLevel >= 2000){
+          this.delayLevel = 2000
+          this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
+        }else{this.delayLevel = this.delayLevel + 50
         this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
-        
       }
+    }
 
       if (keySpaceObj.isDown === true && keyShiftObj.isDown === true) { //craete car cheat
             this.createCar()
@@ -232,4 +243,7 @@ class GameScene extends Phaser.Scene {
       })
       }
     }
+    
+
+    
   export default GameScene
