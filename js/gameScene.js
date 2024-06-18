@@ -11,7 +11,7 @@
  * This class is he Game Scene.
  */
 
-//{TODO}: make buttons for upgrade the levels and make them local\n june 10
+//{TODO}: flowchart
 
 class GameScene extends Phaser.Scene {
     /**
@@ -19,7 +19,7 @@ class GameScene extends Phaser.Scene {
      */
 
     createCar() {
-      console.log("check")
+      // console.log("check") //tester
       const Cars = "carLv" + this.carLevel.toString()
       const newCar = this.physics.add.sprite(this.machine.x, this.machine.y, Cars).setScale(0.8)
        this.carGroup.add(newCar)
@@ -28,24 +28,32 @@ class GameScene extends Phaser.Scene {
       UpgradeMachine() {
         const upgradeCost = 800*1.6+(2500 - this.delayLevel)
         if(this.money >= upgradeCost) {
+          if(this.delayLevel <= 50){
+            alert("you got MAX LEVEL!!")
+          }else{
           this.money -= upgradeCost
-          this.delayLevel -= 100
+          this.delayLevel -= 50
           this.delayText.setText('Machine speed: ' + this.delayLevel.toString())
-          this.sound.play('upgradeSound') 
+          this.sound.play('upgradeSound')
+          }
         }else{
-          alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
+          alert('you need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
         }
       }
 
       UpgradeCar() {
         const upgradeCost = 1000*1.6*this.carLevel
         if(this.money >= upgradeCost) {
+          if(this.carLevel >= 10) {
+            alert("you got MAX LEVEL!!")
+          }else{
           this.money -= upgradeCost
           this.carLevel += 1
           this.levelText.setText('Car Level: ' + this.carLevel.toString())
           this.sound.play('carUpgradeSound') 
+        }
         }else{
-          alert('yoo need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
+          alert('you need more ' + (parseFloat(upgradeCost) - this.money).toFixed(2).toString() + "$ for upgrade it!")
         }
       }
 
