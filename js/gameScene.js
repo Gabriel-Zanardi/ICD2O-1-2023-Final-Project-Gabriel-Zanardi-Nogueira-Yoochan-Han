@@ -114,13 +114,13 @@ class GameScene extends Phaser.Scene {
     this.load.image("carLv1", "./assets/Biat-lv1.png")
     this.load.image("carLv2", "./assets/Fride-lv2.png")
     this.load.image("carLv3", "./assets/Shinjisis-lv3.png")
-    this.load.image("carLv4", "./assets/A'sCar-lv4.png")  //not yet
+    this.load.image("carLv4", "./assets/A'sCar-lv4.png")  
     this.load.image("carLv5", "./assets/lowrider-lv5.png")
-    this.load.image("carLv6", "./assets/cakedilock-lv6.png")  //not yet
+    this.load.image("carLv6", "./assets/cakedilock-lv6.png") 
     this.load.image("carLv7", "./assets/ciderTruck-lv7.png")
     this.load.image("carLv8", "./assets/Igniz-lv8.png")
-    this.load.image("carLv9", "./assets/primemachine-lv9.png")  //not yet
-    this.load.image("carLv10", "./assets/Ayrton'sSoul-lv10.png") //not yet
+    this.load.image("carLv9", "./assets/primemachine-lv9.png") 
+    this.load.image("carLv10", "./assets/Ayrton'sSoul-lv10.png") 
     //sound
     this.load.audio('carUpgradeSound', './assets/Bonk.wav')
     this.load.audio('cash', './assets/Cash-register-SFX.mp3')
@@ -189,7 +189,7 @@ class GameScene extends Phaser.Scene {
         localStorage.setItem('LocalDelayLevel',this.delayLevel)
         localStorage.setItem('LocalCarLevel',this.carLevel)
       }
-    
+
 
       
     //cheat key
